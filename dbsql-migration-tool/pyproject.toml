@@ -1,0 +1,126 @@
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
+
+
+[tool.poetry]
+name = "dbsql-migration-tool"
+version = "0.0.1"
+description = "DBSQL migration tool."
+authors = ["Dominik Schüssele <dominik.schuessele@databricks.com>"]
+readme = "README.md"
+
+[tool.poetry.scripts]
+dbsql-migration-tool = "dbsql_migration_tool.cli:cli"
+
+[tool.poetry.dependencies]
+# project dependencies
+python = "^3.10"
+click = "^8.1.7"
+databricks = "^0.2"
+databricks-sql-connector = "^3.6.0"
+trino = "^0.331.0"
+pyyaml = "^6.0.2"
+pathlib = "^1.0.1"
+pydantic-settings = "^2.7.0"
+stups-zign = "^1.2"
+sqlglot = "^26.0.0"
+polars = "^1.17.1"
+sqlalchemy = "^2.0.36"
+
+
+[tool.poetry.group.dev]
+optional = true
+
+[tool.poetry.group.dev.dependencies]
+# additional python packages used for testing/development only!
+
+# stubs
+
+
+[tool.poetry.group.poetry]
+optional = true
+
+[tool.poetry.group.poetry.dependencies]
+# ensure to keep poetry when using '--sync' option
+poetry = "^1.8.5"
+
+
+[tool.mypy]
+pretty = true
+python_version = "3.10"
+warn_redundant_casts = true
+warn_unused_ignores = true
+
+[[tool.mypy.overrides]]
+module = []
+ignore_missing_imports = true
+
+
+[tool.pylint.checker]
+extension-pkg-allow-list=[]
+
+[tool.pylint.design]
+max-args = 12
+max-attributes = 8
+max-parents = 10
+min-public-methods = 1
+
+[tool.pylint.main]
+py-version = "3.10.13"
+
+[tool.pylint.format]
+max-line-length = 120
+max-module-lines = 1000
+good-names = ["ex",]
+
+[tool.pylint.messages_control]
+disable = []
+
+[tool.pylint.reports]
+msg-template = "{path} - {line} - [{msg_id}({symbol}), {obj}] {msg}"
+output-format = "colorized"
+
+[tool.pylint.string]
+check-quote-consistency = "yes"
+check-str-concat-over-line-jumps = "yes"
+
+[tool.pylint.variables]
+allow-global-unused-variables = "no"
+init-import = "yes"
+
+
+[tool.coverage.report]
+skip_empty = true
+skip_covered = true
+sort = "cover"
+fail_under = 90
+omit = [
+    "*/__init__.py",
+]
+exclude_lines = [
+    "import",
+    "from",
+    "pragma: no cover",
+]
+
+[tool.coverage.run]
+branch = true
+source = [
+    "src/dbsql_migration_tool",
+]
+
+
+[tool.interrogate]
+fail-under = 100
+ignore-init-method = true
+ignore-magic = true
+ignore-module = true
+ignore-private = true
+ignore-regex = [
+    "test_*",
+    "Test*",
+]
+exclude = []
+omit-covered-files = true
+verbose = 2

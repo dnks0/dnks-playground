@@ -1,0 +1,23 @@
+name: "dev"  # unique name for running transpile & experiment(s)
+workload: 1  # query set to load from starburst
+
+persist_queries: false  # persist original and transpiled queries
+out_path: "data"  # output path used when persisting queries
+
+validation: false  # validate transpiled queries
+query_runs: 2  # how many runs per query during experiment
+parallelism: 10 # define level of parallelism, number of concurrent executions
+
+source:
+  dialect: "trino"
+  path: "./queries"
+
+target:
+  host: ""  # the Databricks-SQL / Workspace host
+  warehouse_id: ""  # the warehouse to use when running queries
+  token: ""  # the Databricks API token for authentication
+  catalog: ""  # target catalog used during transpilation
+  dialect: "databricks"  # target dialect used during transpilation
+
+results:
+  catalog: ""  # catalog to use when persisting results. expected to be available!

@@ -1,8 +1,14 @@
 name: spark-connect-unit-tests-demo
 
 services:
+  x-spark-connect-image: &spark_connect_image
+    build:
+      context: .
+      args:
+        PYTHON_VERSION: 3.12
+        SPARK_VERSION: 4.0.1
   demo-spark-connect-server:
-    image: apache/spark:4.0.1
+    <<: *spark_connect_image
     container_name: demo-spark-connect-server
     user: "0"
     environment:
@@ -17,16 +23,17 @@ services:
       - >
           set -euo pipefail;
           mkdir -p /opt/data/warehouse /opt/data/ivy;
-          chown -R 185:185 /opt/data;
-          exec gosu 185:185 /opt/spark/sbin/start-connect-server.sh
-          --packages io.delta:delta-spark_2.13:4.0.1,org.postgresql:postgresql:42.7.3
+          exec /opt/spark/sbin/start-connect-server.sh
+          --packages io.delta:delta-connect-server_2.13:4.0.1,com.google.protobuf:protobuf-java:3.25.1,org.postgresql:postgresql:42.7.3
           --conf spark.driver.bindAddress=0.0.0.0
-          --conf spark.driver.host=demo-spark-connect-server        
+          --conf spark.driver.host=demo-spark-connect-server
           --conf spark.connect.grpc.binding.address=0.0.0.0
           --conf spark.connect.grpc.binding.port=15002
           --conf spark.jars.ivy=/opt/data/ivy
           --conf spark.sql.extensions=io.delta.sql.DeltaSparkSessionExtension
           --conf spark.sql.catalog.spark_catalog=org.apache.spark.sql.delta.catalog.DeltaCatalog
+          --conf spark.connect.extensions.relation.classes=org.apache.spark.sql.connect.delta.DeltaRelationPlugin
+          --conf spark.connect.extensions.command.classes=org.apache.spark.sql.connect.delta.DeltaCommandPlugin
           --conf spark.sql.shuffle.partitions=4
           --conf spark.sql.warehouse.dir=/opt/data/warehouse
           --conf spark.ui.enabled=false
@@ -42,11 +49,7 @@ services:
       - "5432:5432"
 
   demo-test-runner:
-    build:
-      context: .
-      args:
-        PYTHON_VERSION: 3.12
-        SPARK_VERSION: 4.0.1
+    <<: *spark_connect_image
     container_name: demo-test-runner
     environment:
       - SPARK_REMOTE=sc://demo-spark-connect-server:15002

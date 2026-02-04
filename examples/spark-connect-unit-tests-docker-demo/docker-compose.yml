@@ -1,14 +1,14 @@
 name: spark-connect-unit-tests-demo
 
 services:
-  x-spark-connect-image: &spark_connect_image
+  x-custom-image-build: &custom_image_build
     build:
       context: .
       args:
         PYTHON_VERSION: 3.12
         SPARK_VERSION: 4.0.1
   demo-spark-connect-server:
-    <<: *spark_connect_image
+    <<: *custom_image_build
     container_name: demo-spark-connect-server
     user: "0"
     environment:
@@ -49,7 +49,7 @@ services:
       - "5432:5432"
 
   demo-test-runner:
-    <<: *spark_connect_image
+    <<: *custom_image_build
     container_name: demo-test-runner
     environment:
       - SPARK_REMOTE=sc://demo-spark-connect-server:15002

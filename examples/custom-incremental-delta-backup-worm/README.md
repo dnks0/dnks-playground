@@ -45,6 +45,8 @@ source_df.subtract(backup_df).show()
 
 - This sample is currently working with local files. This may be updated to support other
 storage backends (e.g. Azure Blob Storage)
+- This sample currently copies file-by-file from source to backup location. This could be
+parallelized for improved efficiency and performance when backing up large tables. 
 - Keep source `VACUUM` retention long enough to cover backup lag.
 - Never run `OPTIMIZE`, `VACUUM`, or any mutating Delta operations on the backup.
 - `_last_checkpoint` is usually updated in place. To stay WORM compatible we skip this file.
